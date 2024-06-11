@@ -11,7 +11,7 @@ from db import DB
 
 def _hash_password(password: str) -> bytes:
     """Returns a hash of password."""
-    return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
 
 
 def _generate_uuid() -> str:
@@ -31,17 +31,17 @@ class Auth:
         try:
             user = self._db.find_user_by(email=email)
         except NoResultFound:
-            hashed_password = _hash_password(password).decode('utf-8')
+            hashed_password = _hash_password(password).decode("utf-8")
             return self._db.add_user(email, hashed_password)
-        raise ValueError(f'User {email} already exists.')
+        raise ValueError(f"User {email} already exists.")
 
     def valid_login(self, email: str, password: str) -> bool:
         """Return True if user credential is valid or False otherwise."""
         try:
             user = self._db.find_user_by(email=email)
             return bcrypt.checkpw(
-                    password.encode('utf-8'),
-                    user.hashed_password.encode('utf-8'))
+                password.encode("utf-8"), user.hashed_password.encode("utf-8")
+            )
         except NoResultFound:
             return False
 
@@ -84,8 +84,9 @@ class Auth:
         """Updates user password."""
         try:
             user = self._db.find_user_by(reset_token=reset_token)
-            hashed_password = _hash_password(password).decode('utf-8')
+            hashed_password = _hash_password(password).decode("utf-8")
             self._db.update_user(
-                    user.id, hashed_password=hashed_password, reset_token=None)
+                user.id, hashed_password=hashed_password, reset_token=None
+            )
         except NoResultFound:
             raise ValueError
